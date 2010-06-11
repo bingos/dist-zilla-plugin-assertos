@@ -7,7 +7,6 @@ with 'Dist::Zilla::Role::FileGatherer';
 with 'Dist::Zilla::Role::InstallTool';
 with 'Dist::Zilla::Role::MetaProvider';
 
-use Devel::CheckOS qw[list_platforms];
 use File::Spec;
 
 sub mvp_multivalue_args { qw/os/ }
