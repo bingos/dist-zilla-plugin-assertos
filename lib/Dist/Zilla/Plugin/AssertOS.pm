@@ -63,7 +63,6 @@ sub gather_files {
 
     }
   }
-  warn $_, "\n" for $self->zilla->files;
   return;
 }
 
