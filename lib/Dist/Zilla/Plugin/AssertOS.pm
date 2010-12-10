@@ -93,11 +93,7 @@ no Moose;
 
 qq[run run Reynard]
 
-__END__
-
-=head1 NAME
-
-Dist::Zilla::Plugin::AssertOS - Require that our distribution is running on a particular OS
+=pod
 
 =head1 SYNOPSIS
 
@@ -163,22 +159,14 @@ Required by L<Dist::Zilla::Role::MetaProvider>.
 
 =back
 
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams
+=head1 KUDOS
 
 Based on L<use-devel-assertos> by David Cantrell
 
-=head1 KUDOS
+Build.PL support contributed by Yanick Champoux
 
 Thanks to Ricardo Signes, not only for L<Dist::Zilla>, but for explaining L<Dist::Zilla::Role::InstallTool>'s
 place in the build process. This made this plugin possible.
-
-=head1 LICENSE
-
-Copyright E<copy> Chris Williams and David Cantrell
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 
