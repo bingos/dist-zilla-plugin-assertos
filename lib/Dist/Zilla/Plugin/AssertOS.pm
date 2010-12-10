@@ -77,12 +77,14 @@ sub gather_files {
 
 sub setup_installer {
   my $self = shift;
-  my ($mfpl) = grep { $_->name eq 'Makefile.PL' } @{ $self->zilla->files };
-  return unless $mfpl;
-  my $content = qq{use lib 'inc';\nuse Devel::AssertOS qw[};
-  $content .= join ' ', $self->os;
-  $content .= "];\n";
-  $mfpl->content( $content . $mfpl->content );
+  my @mfpl = grep { $_->name eq 'Makefile.PL' or $_->name eq 'Build.PL' } @{ $self->zilla->files };
+  return unless @mfpl;
+  for my $mfpl ( @mfpl ) {
+    my $content = qq{use lib 'inc';\nuse Devel::AssertOS qw[};
+    $content .= join ' ', $self->os;
+    $content .= "];\n";
+    $mfpl->content( $content . $mfpl->content );
+  }
   return;
 }
 
@@ -99,7 +101,8 @@ Dist::Zilla::Plugin::AssertOS - Require that our distribution is running on a pa
 
 =head1 SYNOPSIS
 
-  # In dist.ini - It is important that AssertOS follows MakeMaker
+  # In dist.ini - It is important that AssertOS follows MakeMaker or
+  # ModuleBuild
 
   [MakeMaker]
 
@@ -116,12 +119,13 @@ Dist::Zilla::Plugin::AssertOS is a L<Dist::Zilla> plugin that integrates L<Devel
 may easily stipulate which particular OS environments their distributions may be built and installed on.
 
 The author specifies which OS or OS families are supported. The necessary L<Devel::AssertOS> files are copied to the 
-C<inc/> directory and C<Makefile.PL> is mungled to include the necessary incantation.
+C<inc/> directory and C<Makefile.PL> or C<Build.PL> is mungled to include the necessary incantation.
 
 On the module user side, the bundled C<inc/> L<Devel::AssertOS> determines whether the current environment is 
 supported or not and will die accordingly.
 
-As this plugin mungles the C<Makefile.PL> it is imperative that it is specified in C<dist.ini> AFTER C<[MakeMaker]>.
+As this plugin mungles the C<Makefile.PL>/C<Build.PL> it is imperative that it is specified in C<dist.ini> 
+AFTER C<[MakeMaker]> or C<[ModuleBuild]>.
 
 This plugin also automagically adds the C<no_index> metadata so that C<inc/> is excluded from PAUSE indexing. If 
 you use L<Dist::Zilla::Plugin::MetaNoIndex>, there may be conflicts.
