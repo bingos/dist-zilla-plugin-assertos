@@ -75,10 +75,15 @@ sub gather_files {
   return;
 }
 
+# XXX - this should really be a separate phase that runs after InstallTool -
+# until then, all we can do is die if we are run too soon
 sub setup_installer {
   my $self = shift;
+
   my @mfpl = grep { $_->name eq 'Makefile.PL' or $_->name eq 'Build.PL' } @{ $self->zilla->files };
-  return unless @mfpl;
+
+  $self->log_fatal('No Makefile.PL or Build.PL was found. [AssertOS] should appear in dist.ini after [MakeMaker] or [ModuleBuild]!') unless @mfpl;
+
   for my $mfpl ( @mfpl ) {
     my $content = qq{use lib 'inc';\nuse Devel::AssertOS qw[};
     $content .= join ' ', $self->os;
