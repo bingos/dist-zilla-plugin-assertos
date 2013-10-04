@@ -6,6 +6,7 @@ use Moose;
 with 'Dist::Zilla::Role::FileGatherer';
 with 'Dist::Zilla::Role::InstallTool';
 with 'Dist::Zilla::Role::MetaProvider';
+with 'Dist::Zilla::Role::PrereqSource';
 
 use File::Spec;
 
@@ -18,6 +19,12 @@ has 'os' => (
     auto_deref => 1,
 );
 
+has 'bundle' => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 1,
+);
+
 sub metadata {
   return {
     no_index => {
@@ -26,9 +33,24 @@ sub metadata {
   };
 }
 
+sub register_prereqs {
+  my $self = shift;
+  return if $self->bundle;
+  $self->zilla->register_prereqs(
+    {
+      phase => 'configure',
+      type  => 'requires',
+    },
+    'Devel::CheckOS'  => '1.63',
+    'Devel::AssertOS' => '0',
+  );
+}
+
 sub gather_files {
   my $self = shift;
-  
+
+  return unless $self->bundle;
+
   require Data::Compare;
 
   foreach my $os ( $self->os ) {
@@ -85,7 +107,9 @@ sub setup_installer {
   $self->log_fatal('No Makefile.PL or Build.PL was found. [AssertOS] should appear in dist.ini after [MakeMaker] or [ModuleBuild]!') unless @mfpl;
 
   for my $mfpl ( @mfpl ) {
-    my $content = qq{use lib 'inc';\nuse Devel::AssertOS qw[};
+    my $content = qq{};
+    $content .= qq{use lib 'inc';\n} if $self->bundle;
+    $content .= qq{use Devel::AssertOS qw[};
     $content .= join ' ', $self->os;
     $content .= "];\n";
     $mfpl->content( $content . $mfpl->content );
