@@ -96,7 +96,7 @@ sub setup_installer {
 __PACKAGE__->meta->make_immutable;
 no Moose;
 
-qq[run run Reynard]
+qq[run run Reynard];
 
 =pod
 
