@@ -108,6 +108,7 @@ sub setup_installer {
 
   for my $mfpl ( @mfpl ) {
     my $content = qq{};
+    $content .= qq/use if ! ( grep { \$_ eq '.' } \@INC ), qw[lib .];\n/ if $self->bundle;
     $content .= qq{use lib 'inc';\n} if $self->bundle;
     $content .= qq{use Devel::AssertOS qw[};
     $content .= join ' ', $self->os;
